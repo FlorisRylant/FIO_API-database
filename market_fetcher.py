@@ -37,4 +37,5 @@ def get_order_books(tickers, market_identifier='NC1', logging=False): # voor mee
     for ticker in tickers: out[ticker] = get_order_book(ticker, market_identifier, logging)
     return out
 
-print(get_order_books(['SF', 'FF']))
+if __name__ == '__main__':
+    print(get_order_books(['SF', 'FF']))
