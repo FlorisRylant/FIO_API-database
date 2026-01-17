@@ -3,11 +3,11 @@ from market_fetcher import get_ask
 
 # supplies nodig / 100 arbeiders:
 supplies = {
-    'pioneers'   :{'base':{'DW':4, 'RAT':4, 'OVE':0.5},                         'luxury':{'COF':0.5, 'PWO':0.2}},
-    'settlers'   :{'base':{'DW':5, 'RAT':6, 'EXO':0.5, 'PT':0.5},               'luxury':{'KOM':1, 'REP':0.2}  },
-    'technicians':{'base':{'DW':7.5, 'RAT':7, 'MED':0.5, 'HMS':0.5, 'SCN':0.1}, 'luxury':{'ALE':1, 'SC':0.1}   },
-    'engineers'  :{'base':{'DW':10, 'FIM':7, 'MED':0.5, 'HSS':0.2, 'PDA':0.1},  'luxury':{'GIN':1, 'VG':0.2}   },
-    'scientists' :{'base':{'DW':10, 'MEA':7, 'MED':0.5, 'LC':0.2, 'WS':0.1},    'luxury':{'WIN':1, 'NST':0.1}  }
+    'Pioneers'   :{'base':{'DW':4, 'RAT':4, 'OVE':0.5},                         'luxury':{'COF':0.5, 'PWO':0.2}},
+    'Settlers'   :{'base':{'DW':5, 'RAT':6, 'EXO':0.5, 'PT':0.5},               'luxury':{'KOM':1, 'REP':0.2}  },
+    'Technicians':{'base':{'DW':7.5, 'RAT':7, 'MED':0.5, 'HMS':0.5, 'SCN':0.1}, 'luxury':{'ALE':1, 'SC':0.1}   },
+    'Engineers'  :{'base':{'DW':10, 'FIM':7, 'MED':0.5, 'HSS':0.2, 'PDA':0.1},  'luxury':{'GIN':1, 'VG':0.2}   },
+    'Scientists' :{'base':{'DW':10, 'MEA':7, 'MED':0.5, 'LC':0.2, 'WS':0.1},    'luxury':{'WIN':1, 'NST':0.1}  }
 }
 
 # deze functie is redelijk efficiënt door nul extra info te geven buiten de onderhoudskost
@@ -44,4 +44,4 @@ def upkeep_rapport(workers, luxury={}, market_identifier='NC1', logging=False):
     print('-'*30, f'\ntotal:', ' '*12, f'{total:.2f}\n')
 
 if __name__=='__main__':
-    upkeep_rapport({'pioneers':160, 'settlers':50}, luxury={'pioneers':True})
+    upkeep_rapport({'Pioneers':160, 'Settlers':50}, luxury={'Pioneers':True})
