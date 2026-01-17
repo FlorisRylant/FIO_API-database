@@ -11,12 +11,12 @@ supplies = {
 }
 
 # deze functie is redelijk efficiënt door nul extra info te geven buiten de onderhoudskost
-def calculate_upkeep(workers, luxury={}, market_identifier='NC1', logging=False):
+def calculate_upkeep(workers, luxury=set(), market_identifier='NC1', logging=False):
     needed_items = {}
     for work_type in workers:
         for item in supplies[work_type]['base']:
             needed_items[item] = needed_items.get(item, 0) + supplies[work_type]['base'][item] * workers[work_type]/100
-        if luxury.get(work_type, False): # als een class niet opgegeven is in 'luxury' wordt die niet meegeteld
+        if work_type in luxury:
             for item in supplies[work_type]['luxury']:
                 needed_items[item] = needed_items.get(item, 0) + supplies[work_type]['luxury'][item] * workers[work_type]/100
     if logging: print(f'Fetch-list made: {needed_items}\n')
@@ -26,11 +26,11 @@ def calculate_upkeep(workers, luxury={}, market_identifier='NC1', logging=False)
     return round(cost)
 
 # minder efficiënt, meer info
-def upkeep_rapport(workers, luxury={}, market_identifier='NC1', logging=False):
+def upkeep_rapport(workers, luxury=set(), market_identifier='NC1', logging=False):
     items_needed = set()
     for work_type in workers:
         for item in supplies[work_type]['base']: items_needed.add(item)
-        if luxury.get(work_type, False): # als een class niet opgegeven is in 'luxury' wordt die niet meegeteld
+        if work_type in luxury: # als een class niet opgegeven is in 'luxury' wordt die niet meegeteld
             for item in supplies[work_type]['luxury']: items_needed.add(item)
     if logging: print(f'Fetch-list made: {items_needed}\n')
     supply_prices = {}
@@ -44,4 +44,4 @@ def upkeep_rapport(workers, luxury={}, market_identifier='NC1', logging=False):
     print('-'*30, f'\ntotal:', ' '*12, f'{total:.2f}\n')
 
 if __name__=='__main__':
-    upkeep_rapport({'Pioneers':160, 'Settlers':50}, luxury={'Pioneers':True})
+    upkeep_rapport({'Pioneers':160, 'Settlers':50}, luxury={'Pioneers'})
