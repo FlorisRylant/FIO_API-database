@@ -16,12 +16,16 @@ def get_order_book(ticker, market_identifier='NC1', logging=False):
 def get_ask(ticker, market_identifier='NC1', logging=False):
     """Deze functie gaat eerst naar de website via fetch_order_book
     => enkel gebruiken als je enkel de vraagprijs nodig hebt voor efficiëntie"""
-    return get_order_book(ticker, market_identifier, logging)['Ask']
+    out = get_order_book(ticker, market_identifier, logging).get('Ask', 1_234_567_890)
+    if out==None: return 1_234_567_890
+    else: return out
 
 def get_bid(ticker, market_identifier='NC1', logging=False):
     """Deze functie gaat eerst naar de website via fetch_order_book
     => enkel gebruiken als je enkel de aangeboden prijs nodig hebt voor efficiëntie"""
-    return get_order_book(ticker, market_identifier, logging)['Bid']
+    out = get_order_book(ticker, market_identifier, logging).get('Bid', 0)
+    if out==None: return 0
+    else: return out
 
 def get_currency(market_identifier):
     return {'NC1':'NCC', 'CI1':'CIS', 'IC1':'ICA', 'AI1':'AIC', 'NC2':'NCC', 'CI2':'CIS'}[market_identifier]
