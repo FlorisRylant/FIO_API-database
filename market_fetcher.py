@@ -39,7 +39,7 @@ def plot_chart(data, logging=False): # omdat matplotlib uitzoeken offline een he
         if logging: print(f'Te veel datapunten ({len(data)} gegeven, max 150)')
         plot_chart(data[len(data)-150:], logging)
         return None
-    height = (int(len(data)/6)//3)*3+1 # om een ongeveer mooie aspect ratio te hebben van de grafiek: elke drie regels een tick
+    height = (int(len(data)/6)//3)*3 # om een ongeveer mooie aspect ratio te hebben van de grafiek: elke drie regels een tick
     high_bound, low_bound = 0, 1_234_567_890
     for datapoint in data:
         if datapoint['Low'] < low_bound: low_bound = datapoint['Low']
@@ -47,18 +47,19 @@ def plot_chart(data, logging=False): # omdat matplotlib uitzoeken offline een he
     line_increment = round((high_bound-low_bound)/(height*0.8), 2)
     line_zero = low_bound-line_increment
     for line in range(height, -1, -1):
-        line_val = (line_zero + height*line_increment) # de waarde van die lijn
+        line_val = (line_zero + line*line_increment) # de waarde van die lijn
         out = ''
-        if line%3==0: out += f'{F.RESET}{line_increment:.2f} |'
-        else: out += ''*len(f'{F.RESET}{line_increment:.2f}') + ' |'
+        if line%3==0: out += f'{F.RESET}{line_val:8.2f} |'
+        else: out += ' '*8 + ' |'
         for datapoint in data:
             color = F.RED if datapoint['Close'] < datapoint['Open'] else F.GREEN
             if min(datapoint['Close'], datapoint['Open']) <= line_val <= max(datapoint['Close'], datapoint['Open'])+line_increment/2:
-                out += f'{color}X'
+                out += f'{color}#'
             elif datapoint['Low'] <= line_val <= datapoint['High']:
                 out += f'{color}|'
             else: out += ' '
-        print(line)
+        out += f'{F.RESET}|'
+        print(out)
     print()
         
 
@@ -91,5 +92,5 @@ def get_order_books(tickers, market_identifier='NC1', logging=False): # voor mee
     return out
 
 if __name__ == '__main__':
-#    print(get_order_books(['SF', 'FF']))
-    print(json.dumps(get_price_chart('FE', logging=True), indent=3))
+    print(get_order_books(['SF', 'FF']), '\n')
+    plot_chart(filter_chart(get_price_chart('ALO'), interval='DAY_THREE', n=180))
