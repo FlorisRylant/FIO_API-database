@@ -25,7 +25,7 @@ def get_price_chart(ticker, market_identifier='NC1', logging=False):
     if logging: print(f'Fetched {F.BLUE+ticker+F.RESET} charts from {F.BLUE+market_identifier+F.RESET}.')
     return chart
 
-def filter_chart(chart, interval="DAY_ONE", n=100):
+def filter_chart(chart, interval='DAY_ONE', n=150):
     # enkel laatste n datapunten: achterstevoren door de (al gesorteerde) datalijst gaan
     data_points = []
     i = len(chart)-1
@@ -34,7 +34,8 @@ def filter_chart(chart, interval="DAY_ONE", n=100):
         i -= 1
     return data_points[::-1] # terug van oud naar recent
 
-def plot_chart(data, logging=False): # omdat matplotlib uitzoeken offline een hel is programmeer ik nog liever zelf een plotter
+def plot_chart(ticker, interval='DAY_ONE', n=150, market_identifier='NC1', logging=False): # omdat matplotlib uitzoeken offline een hel is programmeer ik nog liever zelf een plotter
+    data = filter_chart(get_price_chart(ticker, market_identifier, logging), interval, n)
     if len(data) > 150:
         if logging: print(f'Te veel datapunten ({len(data)} gegeven, max 150)')
         plot_chart(data[len(data)-150:], logging)
@@ -44,22 +45,25 @@ def plot_chart(data, logging=False): # omdat matplotlib uitzoeken offline een he
     for datapoint in data:
         if datapoint['Low'] < low_bound: low_bound = datapoint['Low']
         if datapoint['High'] > high_bound: high_bound = datapoint['High']
-    line_increment = round((high_bound-low_bound)/(height*0.8), 2)
+    line_increment = round((high_bound-low_bound)/(height-2), 2)
     line_zero = low_bound-line_increment
+    start_increment = len(f'{line_zero + line_increment*height:.2f}')
+    print('┌─'+'─'*start_increment+'─┬'+f'{f" price chart for {ticker} ":─^{len(data)}}'+'┐')
     for line in range(height, -1, -1):
         line_val = (line_zero + line*line_increment) # de waarde van die lijn
-        out = ''
-        if line%3==0: out += f'{F.RESET}{line_val:8.2f} |'
-        else: out += ' '*8 + ' |'
+        out = '│ '
+        if line%3==0: out += f'{F.RESET}{line_val:{start_increment}.2f} |'
+        else: out += ' '*start_increment + ' │'
         for datapoint in data:
             color = F.RED if datapoint['Close'] < datapoint['Open'] else F.GREEN
             if min(datapoint['Close'], datapoint['Open']) <= line_val <= max(datapoint['Close'], datapoint['Open'])+line_increment/2:
-                out += f'{color}#'
+                out += f'{color}$'
             elif datapoint['Low'] <= line_val <= datapoint['High']:
-                out += f'{color}|'
+                out += f'{color}:'
             else: out += ' '
-        out += f'{F.RESET}|'
+        out += f'{F.RESET}│'
         print(out)
+    print('└─'+'─'*start_increment+'─┴'+'─'*len(data)+'┘')
     print()
         
 
@@ -92,5 +96,5 @@ def get_order_books(tickers, market_identifier='NC1', logging=False): # voor mee
     return out
 
 if __name__ == '__main__':
-    print(get_order_books(['SF', 'FF']), '\n')
-    plot_chart(filter_chart(get_price_chart('ALO'), interval='DAY_THREE', n=180))
+#    print(get_order_books(['SF', 'FF']), '\n')
+    plot_chart('ALO', 'DAY_THREE')
