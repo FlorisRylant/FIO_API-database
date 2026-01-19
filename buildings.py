@@ -1,5 +1,6 @@
 import requests, json, market_fetcher, workforce_calculator
 from colorama import Fore as F
+from recipes import Recipe
 
 class Building:
     def __init__(self, ticker, logging=False):
@@ -13,10 +14,11 @@ class Building:
         except:
             print(f'{F.RED}Omzetten naar json onmogelijk.{F.RESET}')
         else:
-            self.__build_costs, self.__workforce = {}, {}
+            self.__build_costs, self.__recipes, self.__workforce = {}, {}, {}
             for material in self.__data['BuildingCosts']: self.__build_costs[material['CommodityTicker']] = material['Amount']
             for work_type in {'Pioneers', 'Settlers', 'Technicians', 'Engineers', 'Scientists'}:
                 if self.__data[work_type]!=0: self.__workforce[work_type] = self.__data[work_type]
+            for recipe in self.__data['Recipes']: self.__recipes[recipe['RecipeName']] = Recipe(recipe)
             self.__area = self.__data['AreaCost']
             self.__expertise = self.__data['Expertise']
             if logging: print(f'Succesfully fetched {F.BLUE+ticker+F.RESET}')
@@ -38,9 +40,17 @@ class Building:
     
     def get_workforce(self):
         return self.__workforce
+    
+    def __repr__(self):
+        return str(self.__data)
+    
+    def print_recipes(self):
+        for recipe in self.__recipes:
+            print(recipe, self.__recipes[recipe].get_profit_net())
 
     
 if __name__=='__main__':
     sme = Building('WEL')
-    sme.get_build_cost(logging=True)
+#    sme.get_build_cost(logging=True)
     print(sme.get_workforce_cost(logging=True))
+    sme.print_recipes()
